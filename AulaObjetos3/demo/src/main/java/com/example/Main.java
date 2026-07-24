@@ -11,8 +11,8 @@ import java.util.Optional;
 public class Main {
     public static void main(String[] args) {
         // --- BLOCO PARA AUMENTAR A FONTE DE TUDO ---
-        Font fonteTexto = new Font("Arial", Font.BOLD, 20);
-        Font fonteBotao = new Font("Arial", Font.PLAIN, 18);
+        Font fonteTexto = new Font("Arial", Font.BOLD, 30);
+        Font fonteBotao = new Font("Arial", Font.PLAIN, 28);
         UIManager.put("OptionPane.messageFont", fonteTexto);
         UIManager.put("OptionPane.buttonFont", fonteBotao);
         UIManager.put("TextField.font", fonteTexto);
