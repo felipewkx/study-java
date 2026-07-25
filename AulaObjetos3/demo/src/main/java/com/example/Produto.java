@@ -3,19 +3,30 @@ package com.example;
 import java.util.List;
 
 public class Produto {
-    // Atributos
-    private int codigo;
+    // Constantes e Atributos Estáticos (Instruções da imagem)
+    public static final double DESCONTO_MAXIMO = 50; // Corrigido o erro de digitação do slide (MAXINO -> MAXIMO)
+    private static int totalProdutos = 0;
+
+    // Atributos de Instância
+    private final int codigo; // Agora final, pois é gerado uma única vez no construtor
     private String nome;
     private double preco;
     private int quantidade;
 
-    // Construtor
-    public Produto(int codigo, String nome, double preco, int quantidade) {
-        this.codigo = codigo;
+    // Construtor Atualizado (Conforme a imagem)
+    // O código não é mais passado por parâmetro, ele é gerado automaticamente
+    public Produto(String nome, double preco, int quantidade) {
+        // Validação estrita exigida pelo professor
+        if (preco < 0 || quantidade < 0) {
+            throw new IllegalArgumentException("Preço e quantidade não podem ser negativos.");
+        }
+
+        // Auto-incremento do código do produto
+        this.codigo = ++totalProdutos;
+
         this.nome = nome;
         this.preco = preco;
-        // Garante que a quantidade inicial também seja positiva (ou zera)
-        this.quantidade = Math.max(0, quantidade);
+        this.quantidade = quantidade;
     }
 
     // Métodos de Negócio
@@ -45,11 +56,12 @@ public class Produto {
     }
 
     public boolean aplicarDesconto(double percentual) {
-        if (percentual > 0 && percentual <= 100) {
+        // Exemplo de uso da constante DESCONTO_MAXIMO se achar necessário limitar
+        if (percentual > 0 && percentual <= DESCONTO_MAXIMO) {
             this.preco -= this.preco * (percentual / 100);
             return true;
         }
-        return false; // Rejeita percentuais negativos ou acima de 100%
+        return false; // Rejeita se for negativo ou maior que o desconto máximo permitido
     }
 
     public boolean aplicarDescontoValor(double valor) {
@@ -62,6 +74,7 @@ public class Produto {
 
     // Getters para acessar os dados
     public int getCodigo() {
+        // Sem método setter para código, pois ele é final
         return codigo;
     }
 
@@ -77,7 +90,12 @@ public class Produto {
         return quantidade;
     }
 
-    // Método de busca corrigido
+    // Método estático para ler o total de produtos criados no sistema
+    public static int getTotalProdutos() {
+        return totalProdutos;
+    }
+
+    // Método de busca
     public static Produto buscarPorCodigo(List<Produto> lista, int codigo) {
         for (Produto p : lista) {
             if (p.getCodigo() == codigo) {

@@ -19,12 +19,12 @@ public class Main {
         // -------------------------------------------
 
         List<Produto> produtos = new ArrayList<>();
-        produtos.add(new Produto(1, "Monitor", 50.0, 5));
-        produtos.add(new Produto(2, "Mouse", 30.0, 0));
-        produtos.add(new Produto(3, "Teclado", 45.0, 12));
-        produtos.add(new Produto(4, "Gabinete", 95.0, 16));
-        produtos.add(new Produto(5, "Placa de Vídeo", 595.0, 26));
-        produtos.add(new Produto(6, "Pendrive 20gb", 20.0, 56));
+        produtos.add(new Produto("Monitor", 50.0, 5));
+        produtos.add(new Produto("Mouse", 30.0, 0));
+        produtos.add(new Produto("Teclado", 45.0, 12));
+        produtos.add(new Produto("Gabinete", 95.0, 16));
+        produtos.add(new Produto("Placa de Vídeo", 595.0, 26));
+        produtos.add(new Produto("Pendrive 20gb", 20.0, 56));
 
         // Menu Inicial
         String[] opcoes = { "Visualizar Estoque", "Modificar Estoque", "Descontos", "Sair" };
@@ -190,7 +190,7 @@ public class Main {
                     Produto p = produtoEncontrado.get();
                     String inputPercentual = JOptionPane.showInputDialog(null,
                             String.format(
-                                    "Produto: %s\nPreço Atual: R$ %.2f\n\nDigite a porcentagem do desconto (0 a 100):",
+                                    "Produto: %s\nPreço Atual: R$ %.2f\n\nDigite a porcentagem do desconto (0 a 50):",
                                     p.getNome(), p.getPreco()),
                             "Desconto Percentual", JOptionPane.QUESTION_MESSAGE);
 
@@ -204,7 +204,7 @@ public class Main {
                                     "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                         } else {
                             JOptionPane.showMessageDialog(null,
-                                    "FATAL ERROR: Percentual inválido! Deve ser entre 0 e 100%.", "FATAL ERROR",
+                                    "FATAL ERROR: Percentual inválido! Deve ser entre 0 e 50%.", "FATAL ERROR",
                                     JOptionPane.ERROR_MESSAGE);
                         }
                     }
