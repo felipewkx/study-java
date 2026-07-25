@@ -3,8 +3,8 @@ package com.example;
 import java.util.List;
 
 public class Produto {
-    // Constantes e Atributos Estáticos (Instruções da imagem)
-    public static final double DESCONTO_MAXIMO = 50; // Corrigido o erro de digitação do slide (MAXINO -> MAXIMO)
+
+    public static final double DESCONTO_MAXIMO = 50;
     private static int totalProdutos = 0;
 
     // Atributos de Instância
@@ -13,10 +13,9 @@ public class Produto {
     private double preco;
     private int quantidade;
 
-    // Construtor Atualizado (Conforme a imagem)
     // O código não é mais passado por parâmetro, ele é gerado automaticamente
     public Produto(String nome, double preco, int quantidade) {
-        // Validação estrita exigida pelo professor
+
         if (preco < 0 || quantidade < 0) {
             throw new IllegalArgumentException("Preço e quantidade não podem ser negativos.");
         }
