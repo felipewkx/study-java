@@ -83,11 +83,12 @@ public class Main {
                         .filter(p -> p.getCodigo() == codigoBusca)
                         .findFirst();
 
-                if (produtoEncontrado.isPresent()) {
-                    Produto p = produtoEncontrado.get();
-                    String mensagem = String.format("Produto Encontrado:\nNome: %s\nPreço: R$ %.2f\nEstoque: %d",
-                            p.getNome(), p.getPreco(), p.getQuantidade());
-                    JOptionPane.showMessageDialog(null, mensagem, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+          if (produtoEncontrado.isPresent()) {
+    Produto p = produtoEncontrado.get();
+    // ADICIONADO: "Código: %s\n" no formato da String e p.getCodigo() nos argumentos
+    String mensagem = String.format("Produto Encontrado:\nCódigo: %s\nNome: %s\nPreço: R$ %.2f\nEstoque: %d",
+            p.getCodigo(), p.getNome(), p.getPreco(), p.getQuantidade());
+    JOptionPane.showMessageDialog(null, mensagem, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null,
                             "FATAL ERROR: Produto não encontrado para o código ---> " + codigoBusca, "FATAL ERROR",
@@ -267,66 +268,63 @@ public class Main {
         }
     }
 
-    public static void exibirRelatorio(List<Produto> produtos) {
-        StringBuilder relatorio = new StringBuilder();
-        relatorio.append("<html><table border='0' cellpadding='5'>");
-        relatorio.append("<tr>"); // Linha inicial
-
-        int count = 0;
-        for (Produto p : produtos) {
-            if (count > 0 && count % 3 == 0) {
-                relatorio.append("</tr><tr>"); // Quebra de linha da tabela a cada 3 produtos
-            }
-            relatorio.append("<td style='border:1px solid #ccc; background-color:#f9f9f9;'>");
-            relatorio.append("<b>").append(p.getNome()).append("</b><br>");
-            relatorio.append("Preço: R$ ").append(p.getPreco()).append("<br>");
-            relatorio.append("Total: R$ ").append(p.calcularValorTotal()).append("<br>");
-            relatorio.append("Em Estoque: ").append(p.temEstoque() ? "Sim" : "Não").append("<br>");
-            relatorio.append("Qtd: ").append(p.getQuantidade());
-            relatorio.append("</td>");
-            count++;
+   public static void exibirRelatorio(List<Produto> produtos) {
+    StringBuilder relatorio = new StringBuilder();
+    relatorio.append("<html><table border=0 cellpadding=5>");
+    relatorio.append("<tr>"); // Linha inicial
+    int count = 0;
+    
+    for (Produto p : produtos) {
+        if (count > 0 && count % 3 == 0) {
+            relatorio.append("</tr><tr>"); // Quebra de linha da tabela a cada 3 produtos
         }
-        relatorio.append("</tr></table><br>");
-
-        Produto maisCaro = produtos.stream().max(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
-        Produto maisBarato = produtos.stream().min(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
-        Produto maisQuantidade = produtos.stream().max(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
-        Produto menosQuantidade = produtos.stream().min(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
-
-        relatorio.append("===============================\n");
-        if (maisCaro != null) {
-            relatorio.append("<i>PRODUTO MAIS CARO:</i> ").append(maisCaro.getNome()).append(" (R$ ")
-                    .append(maisCaro.getPreco()).append(")").append("\n");
-        }
-        if (maisBarato != null) {
-            relatorio.append("<i>PRODUTO MAIS BARATO:</i> ").append(maisBarato.getNome()).append(" (R$ ")
-                    .append(maisBarato.getPreco()).append(")").append("\n");
-        }
-        if (maisQuantidade != null) {
-            relatorio.append("<i>MAIOR ESTOQUE:</i> ").append(maisQuantidade.getNome()).append(" (")
-                    .append(maisQuantidade.getQuantidade()).append(" unidades)").append("\n");
-        }
-        if (menosQuantidade != null) {
-            relatorio.append("<i>MENOR ESTOQUE:</i> ").append(menosQuantidade.getNome()).append(" (")
-                    .append(menosQuantidade.getQuantidade()).append(" unidades)").append("\n");
-        }
-
-        String htmlRelatorio = "<html><body>"
-                + relatorio.toString().replace("\n", "<br>")
-                + "</body></html>";
-
-        htmlRelatorio = htmlRelatorio
-                .replace("Produto:", "<b>Produto:</b>")
-                .replace("Preço:", "<b>Preço:</b>")
-                .replace("Valor Total:", "<b>Valor Total:</b>")
-                .replace("Tem Estoque:", "<b>Tem Estoque:</b>")
-                .replace("Quantidade:", "<b>Quantidade:</b>")
-                .replace("PRODUTO MAIS CARO:", "<b>PRODUTO MAIS CARO:</b>")
-                .replace("PRODUTO MAIS BARATO:", "<b>PRODUTO MAIS BARATO:</b>")
-                .replace("MAIOR ESTOQUE:", "<b>MAIOR ESTOQUE:</b>")
-                .replace("MENOR ESTOQUE:", "<b>MENOR ESTOQUE:</b>");
-
-        JOptionPane.showMessageDialog(null, htmlRelatorio, "Relatório de Estoque", JOptionPane.INFORMATION_MESSAGE);
-
+        relatorio.append("<td style='border:1px solid #ccc; background-color:#f9f9f9;'>");
+        relatorio.append("Código: ").append(p.getCodigo()).append("<br>");
+        relatorio.append("<b>").append(p.getNome()).append("</b><br>");
+        relatorio.append("Preço: R$ ").append(p.getPreco()).append("<br>");
+        relatorio.append("Total: R$ ").append(p.calcularValorTotal()).append("<br>");
+        relatorio.append("Em Estoque: ").append(p.temEstoque() ? "Sim" : "Não").append("<br>");
+        relatorio.append("Qtd: ").append(p.getQuantidade());
+        relatorio.append("</td>");
+        count++;
     }
+    relatorio.append("</tr></table><br>");
+
+    Produto maisCaro = produtos.stream().max(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
+    Produto maisBarato = produtos.stream().min(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
+    Produto maisQuantidade = produtos.stream().max(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
+    // CORRIGIDO ABAIXO: Alterado de 'status' para 'produtos'
+    Produto menosQuantidade = produtos.stream().min(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
+
+    relatorio.append("===============================\n");
+    if (maisCaro != null) {
+        relatorio.append("<i>PRODUTO MAIS CARO:</i> ").append(maisCaro.getNome()).append(" (R$ ").append(maisCaro.getPreco()).append(")").append("\n");
+    }
+    if (maisBarato != null) {
+        relatorio.append("<i>PRODUTO MAIS BARATO:</i> ").append(maisBarato.getNome()).append(" (R$ ").append(maisBarato.getPreco()).append(")").append("\n");
+    }
+    if (maisQuantidade != null) {
+        relatorio.append("<i>MAIOR ESTOQUE:</i> ").append(maisQuantidade.getNome()).append(" (").append(maisQuantidade.getQuantidade()).append(" unidades)").append("\n");
+    }
+    if (menosQuantidade != null) {
+        relatorio.append("<i>MENOR ESTOQUE:</i> ").append(menosQuantidade.getNome()).append(" (").append(menosQuantidade.getQuantidade()).append(" unidades)").append("\n");
+    }
+
+    String htmlRelatorio = "<html><body>" + relatorio.toString().replace("\n", "<br>") + "</body></html>";
+    
+    htmlRelatorio = htmlRelatorio
+            .replace("Código:", "<b>Código:</b>")
+            .replace("Produto:", "<b>Produto:</b>")
+            .replace("Preço:", "<b>Preço:</b>")
+            .replace("Valor Total:", "<b>Valor Total:</b>")
+            .replace("Tem Estoque:", "<b>Tem Estoque:</b>")
+            .replace("Quantidade:", "<b>Quantidade:</b>")
+            .replace("PRODUTO MAIS CARO:", "<b>PRODUTO MAIS CARO:</b>")
+            .replace("PRODUTO MAIS BARATO:", "<b>PRODUTO MAIS BARATO:</b>")
+            .replace("MAIOR ESTOQUE:", "<b>MAIOR ESTOQUE:</b>")
+            .replace("MENOR ESTOQUE:", "<b>MENOR ESTOQUE:</b>");
+
+    JOptionPane.showMessageDialog(null, htmlRelatorio, "Relatório de Estoque", JOptionPane.INFORMATION_MESSAGE);
+}
+
 }
