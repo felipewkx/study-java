@@ -21,22 +21,46 @@ public class Main {
         UIManager.put("TextField.font", fonteTexto);
         // -------------------------------------------
 
+        // 1. Inicialização da Lista de Produtos (Salva em variáveis para usar nos
+        // pedidos)
         List<Produto> produtos = new ArrayList<>();
-        produtos.add(new Produto("Monitor", 50.0, 5));
-        produtos.add(new Produto("Mouse", 30.0, 0));
-        produtos.add(new Produto("Teclado", 45.0, 12));
-        produtos.add(new Produto("Gabinete", 95.0, 16));
-        produtos.add(new Produto("Placa de Vídeo", 595.0, 26));
-        produtos.add(new Produto("Pendrive 20gb", 20.0, 56));
+        Produto p1 = new Produto("Monitor", 50.0, 5);
+        Produto p2 = new Produto("Mouse", 30.0, 0);
+        Produto p3 = new Produto("Teclado", 45.0, 12);
+        Produto p4 = new Produto("Gabinete", 95.0, 16);
+        Produto p5 = new Produto("Placa de Vídeo", 595.0, 26);
+        Produto p6 = new Produto("Pendrive 20gb", 20.0, 56);
 
+        produtos.add(p1);
+        produtos.add(p2);
+        produtos.add(p3);
+        produtos.add(p4);
+        produtos.add(p5);
+        produtos.add(p6);
+
+        // 2. Inicialização da Lista de Clientes (Salva em variáveis para usar nos
+        // pedidos)
         List<Cliente> clientes = new ArrayList<>();
-        clientes.add(new Cliente("João Silva"));
-        clientes.add(new Cliente("Maria Souza"));
-        clientes.add(new Cliente("Carlos Pereira"));
-        clientes.add(new Cliente("Ana Oliveira"));
+        Cliente c1 = new Cliente("João Silva");
+        Cliente c2 = new Cliente("Maria Souza");
+        Cliente c3 = new Cliente("Carlos Pereira");
+        Cliente c4 = new Cliente("Ana Oliveira");
 
-        // Menu Inicial
-        String[] opcoes = { "Visualizar Estoque", "Modificar Estoque", "Descontos", "Clientes", "Sair" };
+        clientes.add(c1);
+        clientes.add(c2);
+        clientes.add(c3);
+        clientes.add(c4);
+
+        // 3. Inicialização da Lista de Pedidos com os dados fictícios vinculados
+        List<Pedido> pedidos = new ArrayList<>();
+        pedidos.add(new Pedido(c1, p1, 2)); // João Silva comprou 2 Monitores
+        pedidos.add(new Pedido(c2, p3, 1)); // Maria Souza comprou 1 Teclado
+        pedidos.add(new Pedido(c3, p5, 1)); // Carlos Pereira comprou 1 Placa de Vídeo
+        pedidos.add(new Pedido(c4, p6, 5)); // Ana Oliveira comprou 5 Pendrives
+
+        // Array de opções atualizado com "Pedidos"
+        String[] opcoes = { "Visualizar Estoque", "Modificar Estoque", "Descontos", "Clientes", "Pedidos", "Sair" };
+
         int escolha = JOptionPane.showOptionDialog(
                 null,
                 "Selecione a operação desejada:",
@@ -47,21 +71,15 @@ public class Main {
                 opcoes,
                 opcoes[0]);
 
-        if (escolha == 3) {
-            olharCliente(clientes);
-        } else if (escolha == 4 || escolha == JOptionPane.CLOSED_OPTION) {
-            JOptionPane.showMessageDialog(null, "Saindo do sistema...");
-        }
-
+        // Estrutura unificada com os novos índices dos botões
         if (escolha == 0) {
-            // Fluxo Original: Busca por código + Exibição do Relatório Completo
             buscarPorCodigo(produtos);
             exibirRelatorio(produtos);
+
         } else if (escolha == 1) {
-            // Fluxo Novo: Modificar a quantidade de um produto específico
             modificarEstoque(produtos);
+
         } else if (escolha == 2) {
-            // Fluxo de Descontos: Submenu para escolher o tipo de desconto
             String[] opcoesDesconto = { "Por Percentual (%)", "Por Valor (R$)" };
             int escolhaDesconto = JOptionPane.showOptionDialog(
                     null,
@@ -78,8 +96,16 @@ public class Main {
             } else if (escolhaDesconto == 1) {
                 aplicarDescontoPorValor(produtos);
             }
-        }
 
+        } else if (escolha == 3) {
+            olharCliente(clientes); // Abre o menu de clientes (Índice 3)
+
+        } else if (escolha == 4) {
+            olharPedido(pedidos); // Chama o novo método de pedidos (Índice 4)
+
+        } else if (escolha == 5 || escolha == JOptionPane.CLOSED_OPTION) {
+            JOptionPane.showMessageDialog(null, "Saindo do sistema...");
+        }
     }
 
     public static void buscarPorCodigo(List<Produto> produtos) {
@@ -419,6 +445,59 @@ public class Main {
                             JOptionPane.INFORMATION_MESSAGE);
                 }
             }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Por favor, insira valores numéricos válidos.", "Erro de Entrada",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void olharPedido(List<Pedido> pedidos) {
+        String inputCodigo = JOptionPane.showInputDialog(null, "Digite o código do pedido para buscar:",
+                "Buscar Pedido",
+                JOptionPane.QUESTION_MESSAGE);
+
+        if (inputCodigo == null || inputCodigo.trim().isEmpty())
+            return;
+
+        try {
+            int codigoBusca = Integer.parseInt(inputCodigo);
+
+            // Busca o pedido usando Streams e Optional no mesmo padrão dos anteriores
+            Optional<Pedido> pedidoEncontrado = pedidos.stream()
+                    .filter(p -> p.getCodigo() == codigoBusca)
+                    .findFirst();
+
+            if (!pedidoEncontrado.isPresent()) {
+                JOptionPane.showMessageDialog(null, "FATAL ERROR: Pedido não encontrado.", "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Pedido p = pedidoEncontrado.get();
+
+            // Monta a mensagem detalhada extraindo os dados das classes vinculadas (Cliente
+            // e Produto)
+            String mensagemInfo = String.format(
+                    "--- Detalhes do Pedido #%d ---\n\n" +
+                            "Cliente: %s (ID: %d)\n" +
+                            "Produto: %s (ID: %d)\n" +
+                            "Quantidade Solicitada: %d unidades",
+                    p.getCodigo(),
+                    p.getCliente().getNome(), p.getCliente().getCodigo(),
+                    p.getProduto().getNome(), p.getProduto().getCodigo(),
+                    p.getQuantidade());
+
+            String[] acoes = { "Fechar" };
+            JOptionPane.showOptionDialog(
+                    null,
+                    mensagemInfo,
+                    "Informações do Pedido",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    acoes,
+                    acoes[0]);
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Por favor, insira valores numéricos válidos.", "Erro de Entrada",
