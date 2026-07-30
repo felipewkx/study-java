@@ -2,6 +2,9 @@ package com.example;
 
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+
+import com.Cliente;
+
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,7 @@ public class Main {
         produtos.add(new Produto("Pendrive 20gb", 20.0, 56));
 
         // Menu Inicial
-        String[] opcoes = { "Visualizar Estoque", "Modificar Estoque", "Descontos", "Sair" };
+        String[] opcoes = { "Visualizar Estoque", "Modificar Estoque", "Descontos", "Clientes", "Sair" };
         int escolha = JOptionPane.showOptionDialog(
                 null,
                 "Selecione a operação desejada:",
@@ -37,6 +40,14 @@ public class Main {
                 null,
                 opcoes,
                 opcoes[0]);
+
+        if (escolha == 3) {
+            olharCliente();
+        } else if (escolha == 4 || escolha == JOptionPane.CLOSED_OPTION) {
+            JOptionPane.showMessageDialog(null, "Saindo do sistema...");
+        } else {
+            JOptionPane.showMessageDialog(null, "Outra opção selecionada: " + opcoes[escolha]);
+        }
 
         if (escolha == 0) {
             // Fluxo Original: Busca por código + Exibição do Relatório Completo
@@ -83,12 +94,14 @@ public class Main {
                         .filter(p -> p.getCodigo() == codigoBusca)
                         .findFirst();
 
-          if (produtoEncontrado.isPresent()) {
-    Produto p = produtoEncontrado.get();
-    // ADICIONADO: "Código: %s\n" no formato da String e p.getCodigo() nos argumentos
-    String mensagem = String.format("Produto Encontrado:\nCódigo: %s\nNome: %s\nPreço: R$ %.2f\nEstoque: %d",
-            p.getCodigo(), p.getNome(), p.getPreco(), p.getQuantidade());
-    JOptionPane.showMessageDialog(null, mensagem, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                if (produtoEncontrado.isPresent()) {
+                    Produto p = produtoEncontrado.get();
+                    // ADICIONADO: "Código: %s\n" no formato da String e p.getCodigo() nos
+                    // argumentos
+                    String mensagem = String.format(
+                            "Produto Encontrado:\nCódigo: %s\nNome: %s\nPreço: R$ %.2f\nEstoque: %d",
+                            p.getCodigo(), p.getNome(), p.getPreco(), p.getQuantidade());
+                    JOptionPane.showMessageDialog(null, mensagem, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null,
                             "FATAL ERROR: Produto não encontrado para o código ---> " + codigoBusca, "FATAL ERROR",
@@ -268,63 +281,112 @@ public class Main {
         }
     }
 
-   public static void exibirRelatorio(List<Produto> produtos) {
-    StringBuilder relatorio = new StringBuilder();
-    relatorio.append("<html><table border=0 cellpadding=5>");
-    relatorio.append("<tr>"); // Linha inicial
-    int count = 0;
-    
-    for (Produto p : produtos) {
-        if (count > 0 && count % 3 == 0) {
-            relatorio.append("</tr><tr>"); // Quebra de linha da tabela a cada 3 produtos
+    public static void exibirRelatorio(List<Produto> produtos) {
+        StringBuilder relatorio = new StringBuilder();
+        relatorio.append("<html><table border=0 cellpadding=5>");
+        relatorio.append("<tr>"); // Linha inicial
+        int count = 0;
+
+        for (Produto p : produtos) {
+            if (count > 0 && count % 3 == 0) {
+                relatorio.append("</tr><tr>"); // Quebra de linha da tabela a cada 3 produtos
+            }
+            relatorio.append("<td style='border:1px solid #ccc; background-color:#f9f9f9;'>");
+            relatorio.append("Código: ").append(p.getCodigo()).append("<br>");
+            relatorio.append("<b>").append(p.getNome()).append("</b><br>");
+            relatorio.append("Preço: R$ ").append(p.getPreco()).append("<br>");
+            relatorio.append("Total: R$ ").append(p.calcularValorTotal()).append("<br>");
+            relatorio.append("Em Estoque: ").append(p.temEstoque() ? "Sim" : "Não").append("<br>");
+            relatorio.append("Qtd: ").append(p.getQuantidade());
+            relatorio.append("</td>");
+            count++;
         }
-        relatorio.append("<td style='border:1px solid #ccc; background-color:#f9f9f9;'>");
-        relatorio.append("Código: ").append(p.getCodigo()).append("<br>");
-        relatorio.append("<b>").append(p.getNome()).append("</b><br>");
-        relatorio.append("Preço: R$ ").append(p.getPreco()).append("<br>");
-        relatorio.append("Total: R$ ").append(p.calcularValorTotal()).append("<br>");
-        relatorio.append("Em Estoque: ").append(p.temEstoque() ? "Sim" : "Não").append("<br>");
-        relatorio.append("Qtd: ").append(p.getQuantidade());
-        relatorio.append("</td>");
-        count++;
-    }
-    relatorio.append("</tr></table><br>");
+        relatorio.append("</tr></table><br>");
 
-    Produto maisCaro = produtos.stream().max(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
-    Produto maisBarato = produtos.stream().min(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
-    Produto maisQuantidade = produtos.stream().max(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
-    // CORRIGIDO ABAIXO: Alterado de 'status' para 'produtos'
-    Produto menosQuantidade = produtos.stream().min(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
+        Produto maisCaro = produtos.stream().max(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
+        Produto maisBarato = produtos.stream().min(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
+        Produto maisQuantidade = produtos.stream().max(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
+        // CORRIGIDO ABAIXO: Alterado de 'status' para 'produtos'
+        Produto menosQuantidade = produtos.stream().min(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
 
-    relatorio.append("===============================\n");
-    if (maisCaro != null) {
-        relatorio.append("<i>PRODUTO MAIS CARO:</i> ").append(maisCaro.getNome()).append(" (R$ ").append(maisCaro.getPreco()).append(")").append("\n");
-    }
-    if (maisBarato != null) {
-        relatorio.append("<i>PRODUTO MAIS BARATO:</i> ").append(maisBarato.getNome()).append(" (R$ ").append(maisBarato.getPreco()).append(")").append("\n");
-    }
-    if (maisQuantidade != null) {
-        relatorio.append("<i>MAIOR ESTOQUE:</i> ").append(maisQuantidade.getNome()).append(" (").append(maisQuantidade.getQuantidade()).append(" unidades)").append("\n");
-    }
-    if (menosQuantidade != null) {
-        relatorio.append("<i>MENOR ESTOQUE:</i> ").append(menosQuantidade.getNome()).append(" (").append(menosQuantidade.getQuantidade()).append(" unidades)").append("\n");
+        relatorio.append("===============================\n");
+        if (maisCaro != null) {
+            relatorio.append("<i>PRODUTO MAIS CARO:</i> ").append(maisCaro.getNome()).append(" (R$ ")
+                    .append(maisCaro.getPreco()).append(")").append("\n");
+        }
+        if (maisBarato != null) {
+            relatorio.append("<i>PRODUTO MAIS BARATO:</i> ").append(maisBarato.getNome()).append(" (R$ ")
+                    .append(maisBarato.getPreco()).append(")").append("\n");
+        }
+        if (maisQuantidade != null) {
+            relatorio.append("<i>MAIOR ESTOQUE:</i> ").append(maisQuantidade.getNome()).append(" (")
+                    .append(maisQuantidade.getQuantidade()).append(" unidades)").append("\n");
+        }
+        if (menosQuantidade != null) {
+            relatorio.append("<i>MENOR ESTOQUE:</i> ").append(menosQuantidade.getNome()).append(" (")
+                    .append(menosQuantidade.getQuantidade()).append(" unidades)").append("\n");
+        }
+
+        String htmlRelatorio = "<html><body>" + relatorio.toString().replace("\n", "<br>") + "</body></html>";
+
+        htmlRelatorio = htmlRelatorio
+                .replace("Código:", "<b>Código:</b>")
+                .replace("Produto:", "<b>Produto:</b>")
+                .replace("Preço:", "<b>Preço:</b>")
+                .replace("Valor Total:", "<b>Valor Total:</b>")
+                .replace("Tem Estoque:", "<b>Tem Estoque:</b>")
+                .replace("Quantidade:", "<b>Quantidade:</b>")
+                .replace("PRODUTO MAIS CARO:", "<b>PRODUTO MAIS CARO:</b>")
+                .replace("PRODUTO MAIS BARATO:", "<b>PRODUTO MAIS BARATO:</b>")
+                .replace("MAIOR ESTOQUE:", "<b>MAIOR ESTOQUE:</b>")
+                .replace("MENOR ESTOQUE:", "<b>MENOR ESTOQUE:</b>");
+
+        JOptionPane.showMessageDialog(null, htmlRelatorio, "Relatório de Estoque", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    String htmlRelatorio = "<html><body>" + relatorio.toString().replace("\n", "<br>") + "</body></html>";
-    
-    htmlRelatorio = htmlRelatorio
-            .replace("Código:", "<b>Código:</b>")
-            .replace("Produto:", "<b>Produto:</b>")
-            .replace("Preço:", "<b>Preço:</b>")
-            .replace("Valor Total:", "<b>Valor Total:</b>")
-            .replace("Tem Estoque:", "<b>Tem Estoque:</b>")
-            .replace("Quantidade:", "<b>Quantidade:</b>")
-            .replace("PRODUTO MAIS CARO:", "<b>PRODUTO MAIS CARO:</b>")
-            .replace("PRODUTO MAIS BARATO:", "<b>PRODUTO MAIS BARATO:</b>")
-            .replace("MAIOR ESTOQUE:", "<b>MAIOR ESTOQUE:</b>")
-            .replace("MENOR ESTOQUE:", "<b>MENOR ESTOQUE:</b>");
+    public static void olharCliente() {
+        // Criando uma lista mockada (simulada) de clientes para teste
+        List<Cliente> listaClientes = new ArrayList<>();
+        listaClientes.add(new Cliente(1, "Ana Silva"));
+        listaClientes.add(new Cliente(2, "Bruno Souza"));
+        listaClientes.add(new Cliente(3, "Carlos Eduardo"));
 
-    JOptionPane.showMessageDialog(null, htmlRelatorio, "Relatório de Estoque", JOptionPane.INFORMATION_MESSAGE);
-}
+        // 1. Pede o ID do cliente via JOptionPane
+        String inputId = JOptionPane.showInputDialog(null, "Digite o ID do cliente:");
 
+        // Se o usuário clicar em "Cancelar" ou fechar a janela do ID
+        if (inputId == null) {
+            return;
+        }
+
+        try {
+            // 2. Converte a String digitada para um número inteiro
+            int idBuscado = Integer.parseInt(inputId.trim());
+            Cliente clienteEncontrado = null;
+
+            // 3. Procura o cliente na lista pelo ID
+            for (Cliente c : listaClientes) {
+                if (c.getCodigo() == idBuscado) {
+                    clienteEncontrado = c;
+                    break;
+                }
+            }
+
+            // 4. Exibe o resultado também em um JOptionPane
+            if (clienteEncontrado != null) {
+                String mensagem = "--- Dados do Cliente ---\n" +
+                        "Código: " + clienteEncontrado.getCodigo() + "\n" +
+                        "Nome: " + clienteEncontrado.getNome();
+                JOptionPane.showMessageDialog(null, mensagem, "Cliente Encontrado", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "Cliente com o ID " + idBuscado + " não foi encontrado.", "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (NumberFormatException e) {
+            // Caso o usuário digite letras ou deixe em branco
+            JOptionPane.showMessageDialog(null, "Por favor, digite apenas números válidos para o ID.",
+                    "Erro de Digitação", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
