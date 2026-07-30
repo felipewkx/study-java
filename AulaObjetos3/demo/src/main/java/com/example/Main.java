@@ -29,6 +29,12 @@ public class Main {
         produtos.add(new Produto("Placa de Vídeo", 595.0, 26));
         produtos.add(new Produto("Pendrive 20gb", 20.0, 56));
 
+        List<Cliente> clientes = new ArrayList<>();
+        clientes.add(new Cliente("João Silva"));
+        clientes.add(new Cliente("Maria Souza"));
+        clientes.add(new Cliente("Carlos Pereira"));
+        clientes.add(new Cliente("Ana Oliveira"));
+
         // Menu Inicial
         String[] opcoes = { "Visualizar Estoque", "Modificar Estoque", "Descontos", "Clientes", "Sair" };
         int escolha = JOptionPane.showOptionDialog(
@@ -42,11 +48,9 @@ public class Main {
                 opcoes[0]);
 
         if (escolha == 3) {
-            olharCliente();
+            olharCliente(clientes);
         } else if (escolha == 4 || escolha == JOptionPane.CLOSED_OPTION) {
             JOptionPane.showMessageDialog(null, "Saindo do sistema...");
-        } else {
-            JOptionPane.showMessageDialog(null, "Outra opção selecionada: " + opcoes[escolha]);
         }
 
         if (escolha == 0) {
@@ -344,49 +348,82 @@ public class Main {
         JOptionPane.showMessageDialog(null, htmlRelatorio, "Relatório de Estoque", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public static void olharCliente() {
-        // Criando uma lista mockada (simulada) de clientes para teste
-        List<Cliente> listaClientes = new ArrayList<>();
-        listaClientes.add(new Cliente(1, "Ana Silva"));
-        listaClientes.add(new Cliente(2, "Bruno Souza"));
-        listaClientes.add(new Cliente(3, "Carlos Eduardo"));
+    public static void olharCliente(List<Cliente> clientes) {
+        String inputCodigo = JOptionPane.showInputDialog(null, "Digite o código do cliente para buscar:",
+                "Buscar Cliente",
+                JOptionPane.QUESTION_MESSAGE);
 
-        // 1. Pede o ID do cliente via JOptionPane
-        String inputId = JOptionPane.showInputDialog(null, "Digite o ID do cliente:");
-
-        // Se o usuário clicar em "Cancelar" ou fechar a janela do ID
-        if (inputId == null) {
+        if (inputCodigo == null || inputCodigo.trim().isEmpty())
             return;
-        }
 
         try {
-            // 2. Converte a String digitada para um número inteiro
-            int idBuscado = Integer.parseInt(inputId.trim());
-            Cliente clienteEncontrado = null;
+            int codigoBusca = Integer.parseInt(inputCodigo);
+            // Usa Streams e Optional exatamente igual ao seu código de Produto
+            Optional<Cliente> clienteEncontrado = clientes.stream()
+                    .filter(c -> c.getCodigo() == codigoBusca)
+                    .findFirst();
 
-            // 3. Procura o cliente na lista pelo ID
-            for (Cliente c : listaClientes) {
-                if (c.getCodigo() == idBuscado) {
-                    clienteEncontrado = c;
-                    break;
+            if (!clienteEncontrado.isPresent()) {
+                JOptionPane.showMessageDialog(null, "FATAL ERROR: Cliente não encontrado.", "Erro",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Cliente c = clienteEncontrado.get();
+
+            // 1. Menu atualizado com as novas opções de ação
+            String mensagemInfo = String.format("--- Dados do Cliente ---\nCódigo: %d\nNome: %s\n\nO que deseja fazer?",
+                    c.getCodigo(), c.getNome());
+
+            String[] acoes = { "Modificar Nome", "Remover Cliente", "Fechar" };
+            int acao = JOptionPane.showOptionDialog(
+                    null,
+                    mensagemInfo,
+                    "Informações do Cliente",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    acoes,
+                    acoes[2]); // Define "Fechar" como padrão
+
+            // Se clicar em "Fechar" ou fechar o diálogo no 'X'
+            if (acao == 2 || acao == JOptionPane.CLOSED_OPTION) {
+                return;
+            }
+
+            // 2. Lógica para Modificar o Nome
+            if (acao == 0) {
+                String novoNome = JOptionPane.showInputDialog(null, "Digite o novo nome do cliente:",
+                        "Modificar Nome", JOptionPane.QUESTION_MESSAGE);
+
+                if (novoNome == null || novoNome.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Operação cancelada. O nome não pode ser vazio.", "Aviso",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                c.setNome(novoNome); // Atualiza o nome do objeto usando o setter
+                JOptionPane.showMessageDialog(null, "Nome do cliente atualizado com sucesso!", "Sucesso",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            // 3. Lógica para Remover o Cliente
+            else if (acao == 1) {
+                int confirmar = JOptionPane.showConfirmDialog(null,
+                        "Tem certeza que deseja remover o cliente " + c.getNome() + "?",
+                        "Confirmar Remoção", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                if (confirmar == JOptionPane.YES_OPTION) {
+                    clientes.remove(c); // Remove o objeto diretamente da lista
+                    JOptionPane.showMessageDialog(null, "Cliente removido com sucesso!", "Sucesso",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
             }
 
-            // 4. Exibe o resultado também em um JOptionPane
-            if (clienteEncontrado != null) {
-                String mensagem = "--- Dados do Cliente ---\n" +
-                        "Código: " + clienteEncontrado.getCodigo() + "\n" +
-                        "Nome: " + clienteEncontrado.getNome();
-                JOptionPane.showMessageDialog(null, mensagem, "Cliente Encontrado", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "Cliente com o ID " + idBuscado + " não foi encontrado.", "Erro",
-                        JOptionPane.ERROR_MESSAGE);
-            }
-
         } catch (NumberFormatException e) {
-            // Caso o usuário digite letras ou deixe em branco
-            JOptionPane.showMessageDialog(null, "Por favor, digite apenas números válidos para o ID.",
-                    "Erro de Digitação", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Por favor, insira valores numéricos válidos.", "Erro de Entrada",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
+
 }
