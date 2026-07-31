@@ -20,24 +20,7 @@ public class Main {
         UIManager.put("TextField.font", fonteTexto);
         // -------------------------------------------
 
-        // 1. Inicialização da Lista de Produtos (Salva em variáveis para usar nos
-        // pedidos)
-        List<Produto> produtos = new ArrayList<>();
-        Produto p1 = new Produto("Monitor", 50.0, 5);
-        Produto p2 = new Produto("Mouse", 30.0, 0);
-        Produto p3 = new Produto("Teclado", 45.0, 12);
-        Produto p4 = new Produto("Gabinete", 95.0, 16);
-        Produto p5 = new Produto("Placa de Vídeo", 595.0, 26);
-        Produto p6 = new Produto("Pendrive 20gb", 20.0, 56);
-
-        produtos.add(p1);
-        produtos.add(p2);
-        produtos.add(p3);
-        produtos.add(p4);
-        produtos.add(p5);
-        produtos.add(p6);
-
-        // 2. Inicialização da Lista de Clientes (Salva em variáveis para usar nos
+        // 1. Inicialização da Lista de Clientes (Salva em variáveis para usar nos
         // pedidos)
         List<Cliente> clientes = new ArrayList<>();
         Cliente c1 = new Cliente("João Silva");
@@ -50,12 +33,43 @@ public class Main {
         clientes.add(c3);
         clientes.add(c4);
 
+        // 2. Inicialização da Lista de Produtos (usando Pedido para representar cada
+        // produto em estoque)
+        List<Pedido> produtos = new ArrayList<>();
+        // Cliente dummy para itens de estoque (Pedido exige um Cliente não nulo)
+        Cliente prodCliente = new Cliente("Produto");
+        Pedido p1 = new Pedido(prodCliente, "Monitor", 50.0, 5, 1);
+        Pedido p2 = new Pedido(prodCliente, "Mouse", 30.0, 0, 1);
+        Pedido p3 = new Pedido(prodCliente, "Teclado", 45.0, 12, 1);
+        Pedido p4 = new Pedido(prodCliente, "Gabinete", 95.0, 16, 1);
+        Pedido p5 = new Pedido(prodCliente, "Placa de Vídeo", 595.0, 26, 1);
+        Pedido p6 = new Pedido(prodCliente, "Pendrive 20gb", 20.0, 56, 1);
+
+        produtos.add(p1);
+        produtos.add(p2);
+        produtos.add(p3);
+        produtos.add(p4);
+        produtos.add(p5);
+        produtos.add(p6);
+
         // 3. Inicialização da Lista de Pedidos com os dados fictícios vinculados
         List<Pedido> pedidos = new ArrayList<>();
-        pedidos.add(new Pedido(c1, p1, 2)); // João Silva comprou 2 Monitores
-        pedidos.add(new Pedido(c2, p3, 1)); // Maria Souza comprou 1 Teclado
-        pedidos.add(new Pedido(c3, p5, 1)); // Carlos Pereira comprou 1 Placa de Vídeo
-        pedidos.add(new Pedido(c4, p6, 5)); // Ana Oliveira comprou 5 Pendrives
+        pedidos.add(new Pedido(c1, p1.getNomeProduto(), p1.getPrecoProduto(), p1.getEstoqueProduto(), 2)); // João Silva
+                                                                                                           // comprou 2
+                                                                                                           // Monitores
+        pedidos.add(new Pedido(c2, p3.getNomeProduto(), p3.getPrecoProduto(), p3.getEstoqueProduto(), 1)); // Maria
+                                                                                                           // Souza
+                                                                                                           // comprou 1
+                                                                                                           // Teclado
+        pedidos.add(new Pedido(c3, p5.getNomeProduto(), p5.getPrecoProduto(), p5.getEstoqueProduto(), 1)); // Carlos
+                                                                                                           // Pereira
+                                                                                                           // comprou 1
+                                                                                                           // Placa de
+                                                                                                           // Vídeo
+        pedidos.add(new Pedido(c4, p6.getNomeProduto(), p6.getPrecoProduto(), p6.getEstoqueProduto(), 5)); // Ana
+                                                                                                           // Oliveira
+                                                                                                           // comprou 5
+                                                                                                           // Pendrives
 
         // 4. Menu Principal
         // Exemplo usando JPanel e GridLayout (ex: 3 linhas e 2 colunas)
@@ -124,7 +138,7 @@ public class Main {
         }
     }
 
-    public static void buscarPorCodigo(List<Produto> produtos) {
+    public static void buscarPorCodigo(List<Pedido> produtos) {
         String input = JOptionPane.showInputDialog(null, "Digite o código do produto:", "Buscar Produto",
                 JOptionPane.QUESTION_MESSAGE);
 
@@ -136,17 +150,15 @@ public class Main {
                     throw new NumberFormatException();
                 }
 
-                Optional<Produto> produtoEncontrado = produtos.stream()
-                        .filter(p -> p.getCodigo() == codigoBusca)
+                Optional<Pedido> produtoEncontrado = produtos.stream()
+                        .filter(p -> p.getCodigoProduto() == codigoBusca)
                         .findFirst();
 
                 if (produtoEncontrado.isPresent()) {
-                    Produto p = produtoEncontrado.get();
-                    // ADICIONADO: "Código: %s\n" no formato da String e p.getCodigo() nos
-                    // argumentos
+                    Pedido p = produtoEncontrado.get();
                     String mensagem = String.format(
                             "Produto Encontrado:\nCódigo: %s\nNome: %s\nPreço: R$ %.2f\nEstoque: %d",
-                            p.getCodigo(), p.getNome(), p.getPreco(), p.getQuantidade());
+                            p.getCodigoProduto(), p.getNomeProduto(), p.getPrecoProduto(), p.getEstoqueProduto());
                     JOptionPane.showMessageDialog(null, mensagem, "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(null,
@@ -161,7 +173,7 @@ public class Main {
         }
     }
 
-    public static void modificarEstoque(List<Produto> produtos) {
+    public static void modificarEstoque(List<Pedido> produtos) {
         String inputCodigo = JOptionPane.showInputDialog(null, "Digite o código do produto para modificar:",
                 "Modificar Estoque",
                 JOptionPane.QUESTION_MESSAGE);
@@ -171,8 +183,8 @@ public class Main {
 
         try {
             int codigoBusca = Integer.parseInt(inputCodigo);
-            Optional<Produto> produtoEncontrado = produtos.stream()
-                    .filter(p -> p.getCodigo() == codigoBusca)
+            Optional<Pedido> produtoEncontrado = produtos.stream()
+                    .filter(p -> p.getCodigoProduto() == codigoBusca)
                     .findFirst();
 
             if (!produtoEncontrado.isPresent()) {
@@ -181,14 +193,14 @@ public class Main {
                 return;
             }
 
-            Produto p = produtoEncontrado.get();
+            Pedido p = produtoEncontrado.get();
 
             // Menu para Adicionar ou Remover
             String[] acoes = { "Adicionar", "Remover", "Cancelar" };
             int acao = JOptionPane.showOptionDialog(
                     null,
-                    String.format("Produto: %s\nEstoque Atual: %d unidades\n\nO que deseja fazer?", p.getNome(),
-                            p.getQuantidade()),
+                    String.format("Produto: %s\nEstoque Atual: %d unidades\n\nO que deseja fazer?", p.getNomeProduto(),
+                            p.getEstoqueProduto()),
                     "Alterar Estoque",
                     JOptionPane.DEFAULT_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
@@ -217,8 +229,8 @@ public class Main {
 
             if (sucesso) {
                 JOptionPane.showMessageDialog(null,
-                        String.format("Estoque atualizado com sucesso!\nNova quantidade de %s: %d", p.getNome(),
-                                p.getQuantidade()),
+                        String.format("Estoque atualizado com sucesso!\nNova quantidade de %s: %d", p.getNomeProduto(),
+                                p.getEstoqueProduto()),
                         "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(null,
@@ -232,7 +244,7 @@ public class Main {
         }
     }
 
-    public static void aplicarDescontoPercentual(List<Produto> produtos) {
+    public static void aplicarDescontoPercentual(List<Pedido> produtos) {
         String inputCodigo = JOptionPane.showInputDialog(null, "Digite o código do produto para aplicar desconto (%):",
                 "Desconto Percentual", JOptionPane.QUESTION_MESSAGE);
 
@@ -242,16 +254,16 @@ public class Main {
                 if (codigoBusca < 0)
                     throw new NumberFormatException();
 
-                Optional<Produto> produtoEncontrado = produtos.stream()
-                        .filter(p -> p.getCodigo() == codigoBusca)
+                Optional<Pedido> produtoEncontrado = produtos.stream()
+                        .filter(p -> p.getCodigoProduto() == codigoBusca)
                         .findFirst();
 
                 if (produtoEncontrado.isPresent()) {
-                    Produto p = produtoEncontrado.get();
+                    Pedido p = produtoEncontrado.get();
                     String inputPercentual = JOptionPane.showInputDialog(null,
                             String.format(
                                     "Produto: %s\nPreço Atual: R$ %.2f\n\nDigite a porcentagem do desconto (0 a 50):",
-                                    p.getNome(), p.getPreco()),
+                                    p.getNomeProduto(), p.getPrecoProduto()),
                             "Desconto Percentual", JOptionPane.QUESTION_MESSAGE);
 
                     if (inputPercentual != null && !inputPercentual.trim().isEmpty()) {
@@ -260,7 +272,7 @@ public class Main {
                         if (p.aplicarDesconto(percentual)) {
                             JOptionPane.showMessageDialog(null,
                                     String.format("Desconto de %.2f%% aplicado com sucesso!\nNovo preço: R$ %.2f",
-                                            percentual, p.getPreco()),
+                                            percentual, p.getPrecoProduto()),
                                     "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                         } else {
                             JOptionPane.showMessageDialog(null,
@@ -280,7 +292,7 @@ public class Main {
         }
     }
 
-    public static void aplicarDescontoPorValor(List<Produto> produtos) {
+    public static void aplicarDescontoPorValor(List<Pedido> produtos) {
         String inputCodigo = JOptionPane.showInputDialog(null, "Digite o código do produto para aplicar desconto (R$):",
                 "Desconto em Valor", JOptionPane.QUESTION_MESSAGE);
 
@@ -290,15 +302,15 @@ public class Main {
                 if (codigoBusca < 0)
                     throw new NumberFormatException();
 
-                Optional<Produto> produtoEncontrado = produtos.stream()
-                        .filter(p -> p.getCodigo() == codigoBusca)
+                Optional<Pedido> produtoEncontrado = produtos.stream()
+                        .filter(p -> p.getCodigoProduto() == codigoBusca)
                         .findFirst();
 
                 if (produtoEncontrado.isPresent()) {
-                    Produto p = produtoEncontrado.get();
+                    Pedido p = produtoEncontrado.get();
                     String inputValor = JOptionPane.showInputDialog(null,
                             String.format("Produto: %s\nPreço Atual: R$ %.2f\n\nDigite o valor em reais do desconto:",
-                                    p.getNome(), p.getPreco()),
+                                    p.getNomeProduto(), p.getPrecoProduto()),
                             "Desconto em Valor", JOptionPane.QUESTION_MESSAGE);
 
                     if (inputValor != null && !inputValor.trim().isEmpty()) {
@@ -307,7 +319,7 @@ public class Main {
                         if (p.aplicarDescontoValor(valor)) {
                             JOptionPane.showMessageDialog(null,
                                     String.format("Desconto de R$ %.2f aplicado com sucesso!\nNovo preço: R$ %.2f",
-                                            valor, p.getPreco()),
+                                            valor, p.getPrecoProduto()),
                                     "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                         } else {
                             JOptionPane.showMessageDialog(null,
@@ -327,50 +339,49 @@ public class Main {
         }
     }
 
-    public static void exibirRelatorio(List<Produto> produtos) {
+    public static void exibirRelatorio(List<Pedido> produtos) {
         StringBuilder relatorio = new StringBuilder();
         relatorio.append("<html><table border=0 cellpadding=5>");
         relatorio.append("<tr>"); // Linha inicial
         int count = 0;
 
-        for (Produto p : produtos) {
+        for (Pedido p : produtos) {
             if (count > 0 && count % 3 == 0) {
                 relatorio.append("</tr><tr>"); // Quebra de linha da tabela a cada 3 produtos
             }
             relatorio.append("<td style='border:1px solid #ccc; background-color:#f9f9f9;'>");
-            relatorio.append("Código: ").append(p.getCodigo()).append("<br>");
-            relatorio.append("<b>").append(p.getNome()).append("</b><br>");
-            relatorio.append("Preço: R$ ").append(p.getPreco()).append("<br>");
-            relatorio.append("Total: R$ ").append(p.calcularValorTotal()).append("<br>");
+            relatorio.append("Código: ").append(p.getCodigoProduto()).append("<br>");
+            relatorio.append("<b>").append(p.getNomeProduto()).append("</b><br>");
+            relatorio.append("Preço: R$ ").append(p.getPrecoProduto()).append("<br>");
+            relatorio.append("Total: R$ ").append(p.getPrecoProduto() * p.getEstoqueProduto()).append("<br>");
             relatorio.append("Em Estoque: ").append(p.temEstoque() ? "Sim" : "Não").append("<br>");
-            relatorio.append("Qtd: ").append(p.getQuantidade());
+            relatorio.append("Qtd: ").append(p.getEstoqueProduto());
             relatorio.append("</td>");
             count++;
         }
         relatorio.append("</tr></table><br>");
 
-        Produto maisCaro = produtos.stream().max(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
-        Produto maisBarato = produtos.stream().min(Comparator.comparingDouble(Produto::getPreco)).orElse(null);
-        Produto maisQuantidade = produtos.stream().max(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
-        // CORRIGIDO ABAIXO: Alterado de 'status' para 'produtos'
-        Produto menosQuantidade = produtos.stream().min(Comparator.comparingInt(Produto::getQuantidade)).orElse(null);
+        Pedido maisCaro = produtos.stream().max(Comparator.comparingDouble(Pedido::getPrecoProduto)).orElse(null);
+        Pedido maisBarato = produtos.stream().min(Comparator.comparingDouble(Pedido::getPrecoProduto)).orElse(null);
+        Pedido maisQuantidade = produtos.stream().max(Comparator.comparingInt(Pedido::getEstoqueProduto)).orElse(null);
+        Pedido menosQuantidade = produtos.stream().min(Comparator.comparingInt(Pedido::getEstoqueProduto)).orElse(null);
 
         relatorio.append("===============================\n");
         if (maisCaro != null) {
-            relatorio.append("<i>PRODUTO MAIS CARO:</i> ").append(maisCaro.getNome()).append(" (R$ ")
-                    .append(maisCaro.getPreco()).append(")").append("\n");
+            relatorio.append("<i>PRODUTO MAIS CARO:</i> ").append(maisCaro.getNomeProduto()).append(" (R$ ")
+                    .append(maisCaro.getPrecoProduto()).append(")").append("\n");
         }
         if (maisBarato != null) {
-            relatorio.append("<i>PRODUTO MAIS BARATO:</i> ").append(maisBarato.getNome()).append(" (R$ ")
-                    .append(maisBarato.getPreco()).append(")").append("\n");
+            relatorio.append("<i>PRODUTO MAIS BARATO:</i> ").append(maisBarato.getNomeProduto()).append(" (R$ ")
+                    .append(maisBarato.getPrecoProduto()).append(")").append("\n");
         }
         if (maisQuantidade != null) {
-            relatorio.append("<i>MAIOR ESTOQUE:</i> ").append(maisQuantidade.getNome()).append(" (")
-                    .append(maisQuantidade.getQuantidade()).append(" unidades)").append("\n");
+            relatorio.append("<i>MAIOR ESTOQUE:</i> ").append(maisQuantidade.getNomeProduto()).append(" (")
+                    .append(maisQuantidade.getEstoqueProduto()).append(" unidades)").append("\n");
         }
         if (menosQuantidade != null) {
-            relatorio.append("<i>MENOR ESTOQUE:</i> ").append(menosQuantidade.getNome()).append(" (")
-                    .append(menosQuantidade.getQuantidade()).append(" unidades)").append("\n");
+            relatorio.append("<i>MENOR ESTOQUE:</i> ").append(menosQuantidade.getNomeProduto()).append(" (")
+                    .append(menosQuantidade.getEstoqueProduto()).append(" unidades)").append("\n");
         }
 
         String htmlRelatorio = "<html><body>" + relatorio.toString().replace("\n", "<br>") + "</body></html>";
@@ -501,7 +512,7 @@ public class Main {
                             "Quantidade Solicitada: %d unidades",
                     p.getCodigo(),
                     p.getCliente().getNome(), p.getCliente().getCodigo(),
-                    p.getProduto().getNome(), p.getProduto().getCodigo(),
+                    p.getNomeProduto(), p.getCodigoProduto(),
                     p.getQuantidade());
 
             String[] acoes = { "Fechar" };
