@@ -1,11 +1,10 @@
 package com.example;
 
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.*;
+import java.awt.*;
 
 import com.Cliente;
 
-import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Comparator;
@@ -58,53 +57,70 @@ public class Main {
         pedidos.add(new Pedido(c3, p5, 1)); // Carlos Pereira comprou 1 Placa de Vídeo
         pedidos.add(new Pedido(c4, p6, 5)); // Ana Oliveira comprou 5 Pendrives
 
-        // Array de opções atualizado com "Pedidos"
+        // 4. Menu Principal
+        // Exemplo usando JPanel e GridLayout (ex: 3 linhas e 2 colunas)
+        JPanel painel = new JPanel(new GridLayout(3, 2, 5, 5)); // 3 linhas, 2 colunas, com espaço de 5px
         String[] opcoes = { "Visualizar Estoque", "Modificar Estoque", "Descontos", "Clientes", "Pedidos", "Sair" };
 
-        int escolha = JOptionPane.showOptionDialog(
+        JButton[] botoes = new JButton[opcoes.length];
+        int[] escolhaUser = { -1 }; // Armazena a escolha
+
+        for (int i = 0; i < opcoes.length; i++) {
+            final int index = i;
+            botoes[i] = new JButton(opcoes[i]);
+            botoes[i].addActionListener(e -> {
+                escolhaUser[0] = index;
+                // Busca a janela correspondente ao botão clicado e a fecha
+                Window minhaJanela = SwingUtilities.getWindowAncestor((Component) e.getSource());
+                if (minhaJanela != null) {
+                    minhaJanela.dispose();
+                }
+            });
+            painel.add(botoes[i]);
+        }
+
+        JOptionPane.showOptionDialog(
                 null,
-                "Selecione a operação desejada:",
+                painel,
                 "Controle de Estoque",
                 JOptionPane.DEFAULT_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
-                opcoes,
-                opcoes[0]);
+                new Object[] {}, // Sem botões padrão embaixo
+                null);
 
-        // Estrutura unificada com os novos índices dos botões
+        int escolha = escolhaUser[0];
+
+        // Processa a escolha do menu
         if (escolha == 0) {
-            buscarPorCodigo(produtos);
             exibirRelatorio(produtos);
-
         } else if (escolha == 1) {
             modificarEstoque(produtos);
-
         } else if (escolha == 2) {
-            String[] opcoesDesconto = { "Por Percentual (%)", "Por Valor (R$)" };
-            int escolhaDesconto = JOptionPane.showOptionDialog(
+            // Submenu para descontos
+            String[] opcoesDesconto = { "Percentual (%)", "Valor (R$)", "Cancelar" };
+            int subEscolha = JOptionPane.showOptionDialog(
                     null,
-                    "Selecione o tipo de desconto que deseja aplicar:",
-                    "Aplicar Desconto",
+                    "Qual tipo de desconto deseja aplicar?",
+                    "Descontos",
                     JOptionPane.DEFAULT_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     opcoesDesconto,
-                    opcoesDesconto[0]);
+                    opcoesDesconto[2]);
 
-            if (escolhaDesconto == 0) {
+            if (subEscolha == 0) {
                 aplicarDescontoPercentual(produtos);
-            } else if (escolhaDesconto == 1) {
+            } else if (subEscolha == 1) {
                 aplicarDescontoPorValor(produtos);
             }
-
         } else if (escolha == 3) {
-            olharCliente(clientes); // Abre o menu de clientes (Índice 3)
-
+            olharCliente(clientes);
         } else if (escolha == 4) {
-            olharPedido(pedidos); // Chama o novo método de pedidos (Índice 4)
-
-        } else if (escolha == 5 || escolha == JOptionPane.CLOSED_OPTION) {
-            JOptionPane.showMessageDialog(null, "Saindo do sistema...");
+            olharPedido(pedidos);
+        } else if (escolha == 5) {
+            JOptionPane.showMessageDialog(null, "Saindo do sistema...", "Sair", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
         }
     }
 
