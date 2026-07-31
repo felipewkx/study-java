@@ -71,20 +71,23 @@ public class Main {
                                                                                                            // comprou 5
                                                                                                            // Pendrives
 
-        // 4. Menu Principal
-        // Exemplo usando JPanel e GridLayout (ex: 3 linhas e 2 colunas)
-        JPanel painel = new JPanel(new GridLayout(3, 2, 5, 5)); // 3 linhas, 2 colunas, com espaço de 5px
+        // 4. Menu Principal // Exemplo usando JPanel e GridLayout (ex: 3 linhas e 2
+        // colunas)
+        JPanel painel = new JPanel(new GridLayout(3, 2, 10, 10)); // Aumentado o espaço entre os botões para 10px
         String[] opcoes = { "Visualizar Estoque", "Modificar Estoque", "Descontos", "Clientes", "Pedidos", "Sair" };
-
         JButton[] botoes = new JButton[opcoes.length];
         int[] escolhaUser = { -1 }; // Armazena a escolha
+
+        // Fonte grande e em negrito para facilitar a leitura (tamanho 20)
+        Font fonteGrande = new Font("Arial", Font.BOLD, 20);
 
         for (int i = 0; i < opcoes.length; i++) {
             final int index = i;
             botoes[i] = new JButton(opcoes[i]);
+            botoes[i].setFont(fonteGrande); // Aplica a fonte maior
+            botoes[i].setMargin(new Insets(15, 15, 15, 15)); // Aumenta a área interna do botão
             botoes[i].addActionListener(e -> {
-                escolhaUser[0] = index;
-                // Busca a janela correspondente ao botão clicado e a fecha
+                escolhaUser[0] = index; // Busca a janela correspondente ao botão clicado e a fecha
                 Window minhaJanela = SwingUtilities.getWindowAncestor((Component) e.getSource());
                 if (minhaJanela != null) {
                     minhaJanela.dispose();
