@@ -31,7 +31,7 @@ public class Main {
         ProdutoFisico livro = new ProdutoFisico("Livro Físico - Harry Potter E A Pedra Filosofal", 50.0, 15.0);
 
         // Criando um produto digital (E-book) com preço de 30.0 e o link do QRCode
-        ProdutoDigital ebook = new ProdutoDigital("E-book Java - Harry Potter E A Câmara Secreta", 30.0, "88453636454");
+        ProdutoDigital ebook = new ProdutoDigital("E-book - Harry Potter E A Câmara Secreta", 30.0, "88453636454");
 
         // ==========================================
         // MOSTRANDO OS CLIENTES NA TELA
@@ -90,7 +90,34 @@ public class Main {
         System.out.println("Produto: " + ebook.nome);
         System.out.println("Preço Final: R$ " + ebook.calcularPrecoFinal());
         System.out.println("Link do QR Code: " + ebook.qrCode);
+        System.out.println();
 
+        // ==========================================
+        // PROCESSANDO PAGAMENTOS COM AS CLASSES FILHAS
+        // ==========================================
+
+        System.out.println("=== PROCESSAMENTO DE PAGAMENTOS ===");
+        System.out.println();
+
+        // 1. Pagando o Livro com Cartão
+        Pagamento pag1 = new PagamentoCartao(livro.calcularPrecoFinal());
+        System.out.println("Tentando pagar [" + livro.nome + "] no Cartão:");
+        pag1.processar();
+        System.out.println("Valor Base: R$ " + pag1.getValor());
+        System.out.println("Taxa de 5%: R$ " + pag1.calcularTaxa());
+        System.out.println("Total: R$ " + pag1.calcularTotal());
+
+        System.out.println("-----------------------------------");
+        System.out.println();
+
+        // 2. Pagando o E-book com Pix
+        Pagamento pag2 = new PagamentoBoleto(ebook.calcularPrecoFinal());
+        System.out.println("Tentando pagar [" + ebook.nome + "] no Boleto:");
+        pag2.processar();
+        System.out.println("Valor Base: R$ " + pag2.getValor());
+        System.out.println("Taxa: R$ " + pag2.calcularTaxa());
+        System.out.println("Total: R$ " + pag2.calcularTotal());
+
+        System.out.println("-----------------------------------");
     }
-
 }
