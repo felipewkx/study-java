@@ -99,24 +99,33 @@ public class Main {
         System.out.println("=== PROCESSAMENTO DE PAGAMENTOS ===");
         System.out.println();
 
-        // 1. Pagando o Livro com Cartão
-        Pagamento pag1 = new PagamentoCartao(livro.calcularPrecoFinal());
-        System.out.println("Tentando pagar [" + livro.nome + "] no Cartão:");
+        // 1. Pagando o E-book com Cartão
+        Pagamento pag1 = new PagamentoCartao(ebook.calcularPrecoFinal());
+        System.out.println("Tentando pagar [" + ebook.nome + "] no Cartão:");
         pag1.processar();
         System.out.println("Valor Base: R$ " + pag1.getValor());
         System.out.println("Taxa de 5%: R$ " + pag1.calcularTaxa());
         System.out.println("Total: R$ " + pag1.calcularTotal());
 
         System.out.println("-----------------------------------");
-        System.out.println();
 
-        // 2. Pagando o E-book com Pix
+        // 2. Pagando o E-book com Boleto
         Pagamento pag2 = new PagamentoBoleto(ebook.calcularPrecoFinal());
         System.out.println("Tentando pagar [" + ebook.nome + "] no Boleto:");
         pag2.processar();
         System.out.println("Valor Base: R$ " + pag2.getValor());
-        System.out.println("Taxa: R$ " + pag2.calcularTaxa());
+        System.out.println("Taxa Fixa: R$ " + pag2.calcularTaxa());
         System.out.println("Total: R$ " + pag2.calcularTotal());
+
+        System.out.println("-----------------------------------");
+
+        // 3. Pagando o E-book com Pix
+        Pagamento pag3 = new PagamentoPix(ebook.calcularPrecoFinal());
+        System.out.println("Tentando pagar [" + ebook.nome + "] no Pix:");
+        pag3.processar();
+        System.out.println("Valor Base: R$ " + pag3.getValor());
+        System.out.println("Taxa Zero: R$ " + pag3.calcularTaxa());
+        System.out.println("Total: R$ " + pag3.calcularTotal());
 
         System.out.println("-----------------------------------");
     }
