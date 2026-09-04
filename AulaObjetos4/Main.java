@@ -1,118 +1,172 @@
 import java.util.ArrayList;
 
 public class Main {
+
     public static void main(String[] args) {
-        // ==========================================
-        // CRIANDO OS CLIENTES
-        // ==========================================
-        Cliente c1 = new Cliente("Ana Silva", "ana@email.com", "123.456.789-00", "(51) 99999-9999");
+
+        // clientes
+        Cliente c1 = new Cliente("Ana Silva", "ana@email.com",
+                "123.456.789-00", "(51) 99999-9999");
         c1.adicionarPontos(150);
 
-        Cliente c2 = new Cliente("Carlos Souza", "carlos.souza@email.com", "234.567.890-11", "(11) 98888-8888");
+        Cliente c2 = new Cliente("Carlos Souza", "carlos.souza@email.com",
+                "234.567.890-11", "(11) 98888-8888");
         c2.adicionarPontos(50);
 
-        Cliente c3 = new Cliente("Mariana Costa", "mari.costa@email.com", "345.678.901-22", "(21) 97777-7777");
+        Cliente c3 = new Cliente("Mariana Costa", "mari.costa@email.com",
+                "345.678.901-22", "(21) 97777-7777");
 
-        // ==========================================
-        // CRIANDO OS FUNCIONÁRIOS
-        // ==========================================
-        Funcionario f1 = new Funcionario("Roberto Alves", "roberto@empresa.com", "456.789.012-33", "(51) 95555-5555",
-                "FUNC001");
-        Funcionario f2 = new Funcionario("Fernanda Lima", "fernanda@empresa.com", "567.890.123-44", "(11) 94444-4444",
-                "FUNC002");
+        // funcionarios
+        Funcionario f1 = new Funcionario("Roberto Alves", "roberto@empresa.com",
+                "456.789.012-33", "(51) 95555-5555", "MAT-001");
 
-        // ==========================================
-        // CRIANDO OS PRODUTOS
-        // ==========================================
-        // Criando um produto físico (Livro) com preço de 50.0 e frete de 15.0
-        ProdutoFisico livro = new ProdutoFisico("Livro Físico - Harry Potter E A Pedra Filosofal", 50.0, 15.0);
+        Funcionario f2 = new Funcionario("Fernanda Lima", "fernanda@empresa.com",
+                "567.890.123-44", "(11) 94444-4444", "MAT-002");
 
-        // Criando um produto digital (E-book) com preço de 30.0 e o link do QRCode
-        ProdutoDigital ebook = new ProdutoDigital("E-book - Harry Potter E A Câmara Secreta", 30.0, "88453636454");
+        // produtos
+        ProdutoFisico livro = new ProdutoFisico(
+                "Livro Físico - Harry Potter E A Pedra Filosofal",
+                50.0, 15.0);
 
-        // ==========================================
-        // MOSTRANDO OS CLIENTES NA TELA
-        // ==========================================
-        System.out.println("=== LISTA DE CLIENTES ===");
-        System.out.println();
+        ProdutoDigital ebook = new ProdutoDigital(
+                "E-book - Harry Potter E A Câmara Secreta",
+                30.0, "88453636454");
+
+        System.out.println("====================================");
+        System.out.println("       SISTEMA DE VENDAS");
+        System.out.println("====================================");
+
+        // clientes
+        System.out.println("\nCLIENTES");
+        System.out.println("------------------------------------");
+
         System.out.print(c1.exibirDados());
-        System.out.println("-----------------------------------");
-        System.out.println();
+
+        System.out.println("------------------------------------");
+
         System.out.print(c2.exibirDados());
-        System.out.println("-----------------------------------");
-        System.out.println();
+
+        System.out.println("------------------------------------");
+
         System.out.print(c3.exibirDados());
-        System.out.println("-----------------------------------");
-        System.out.println();
 
-        // ==========================================
-        // MOSTRANDO OS FUNCIONÁRIOS NA TELA
-        // ==========================================
-        System.out.println("=== LISTA DE FUNCIONÁRIOS ===");
-        System.out.println();
+        // funcionarios
+        System.out.println("\nFUNCIONARIOS");
+        System.out.println("------------------------------------");
+
         System.out.print(f1.exibirDados());
-        System.out.print(f1.exibirMatricula());
-        System.out.println("-----------------------------------");
-        System.out.println();
+        System.out.println(f1.exibirMatricula());
+
+        System.out.println("------------------------------------");
+
         System.out.print(f2.exibirDados());
-        System.out.print(f2.exibirMatricula());
-        System.out.println("-----------------------------------");
-        System.out.println();
+        System.out.println(f2.exibirMatricula());
 
-        // ==========================================
-        // MOSTRANDO OS PRODUTOS NA TELA
-        // ==========================================
-        System.out.println("=== LISTA DE PRODUTOS ===");
-        System.out.println();
-        System.out.println("Produto: " + livro.nome);
-        System.out.println("Preço Final com Frete: R$ " + livro.calcularPrecoFinal());
-        System.out.println("Frete cobrado: R$ " + livro.frete);
-        System.out.println("-----------------------------------");
-        System.out.println("Produto: " + ebook.nome);
-        System.out.println("Preço Final: R$ " + ebook.calcularPrecoFinal());
-        System.out.println("Link do QR Code: " + ebook.qrCode);
-        System.out.println();
+        // produtos
+        System.out.println("\nPRODUTOS");
+        System.out.println("------------------------------------");
 
-        // ==========================================
-        // PROCESSANDO PAGAMENTOS COM POLIMORFISMO
-        // ==========================================
-        System.out.println("=== PROCESSAMENTO DE PAGAMENTOS ===");
-        System.out.println();
+        System.out.println("Nome: " + livro.nome);
+        System.out.println("Frete: R$ " + livro.frete);
+        System.out.println("Preco final: R$ " + livro.calcularPrecoFinal());
 
-        // Criando a lista polimórfica
-        ArrayList<Pagamento> pagamentos = new ArrayList<>();
+        System.out.println("------------------------------------");
 
-        // Adicionando as 5 formas de pagamento originais
-        pagamentos.add(new PagamentoCartao(ebook.calcularPrecoFinal()));
-        pagamentos.add(new PagamentoBoleto(ebook.calcularPrecoFinal()));
-        pagamentos.add(new PagamentoPix(ebook.calcularPrecoFinal()));
-        pagamentos.add(new PagamentoDinheiro(ebook.calcularPrecoFinal()));
-        pagamentos.add(new PagamentoCartao(livro.calcularPrecoFinal())); // 5º Pagamento (Livro no Cartão)
+        System.out.println("Nome: " + ebook.nome);
+        System.out.println("Preco final: R$ " + ebook.calcularPrecoFinal());
+        System.out.println("QR Code: " + ebook.qrCode);
 
-        // Adicionando os 2 novos pagamentos por Vale requisitados
-        // Vale 1: Saldo suficiente (100.0) para pagar o livro (65.0) -> APROVA
-        pagamentos.add(new PagamentoVale(livro.calcularPrecoFinal(), 100.0));
+        // pagamentos
+        System.out.println("\nPAGAMENTOS");
+        System.out.println("------------------------------------");
 
-        // Vale 2: Saldo insuficiente (20.0) para pagar o livro (65.0) -> RECUSA
-        pagamentos.add(new PagamentoVale(livro.calcularPrecoFinal(), 20.0));
+        ArrayList<Pagavel> formas = new ArrayList<>();
 
-        // Variável para acumular o total geral de todos os pagamentos
-        double gastoTotalGeral = 0.0;
+        double precoEbook = ebook.calcularPrecoFinal();
+        double precoLivro = livro.calcularPrecoFinal();
 
-        // Varrendo a lista e processando cada pagamento genericamente
-        for (Pagamento pagamento : pagamentos) {
-            pagamento.processar();
-            System.out.println("Valor Base: R$ " + pagamento.getValor());
-            System.out.println("Taxa: R$ " + pagamento.calcularTaxa());
-            System.out.println("Total: R$ " + pagamento.calcularTotal());
-            System.out.println("=========================================");
+        formas.add(new PagamentoCartao(precoEbook));
+        formas.add(new PagamentoBoleto(precoEbook));
+        formas.add(new PagamentoPix(precoEbook));
+        formas.add(new PagamentoDinheiro(precoEbook));
 
-            // Somando o total do pagamento atual ao acumulador geral
-            gastoTotalGeral += pagamento.calcularTotal();
+        formas.add(new PagamentoCartao(precoLivro));
+        formas.add(new PagamentoVale(precoLivro, 100.0));
+        formas.add(new PagamentoVale(precoLivro, 20.0));
+
+        formas.add(new ValePresente(50.0));
+
+        double totalGeral = 0;
+        int numero = 1;
+
+        for (Pagavel forma : formas) {
+
+            System.out.println("");
+            System.out.println("Transacao " + numero);
+
+            forma.processar();
+
+            if (forma instanceof Pagamento) {
+
+                Pagamento p = (Pagamento) forma;
+
+                System.out.println("Valor: R$ " + p.getValor());
+                System.out.println("Taxa: R$ " + p.calcularTaxa());
+
+            } else if (forma instanceof ConsultavelSaldo) {
+
+                ConsultavelSaldo saldo = (ConsultavelSaldo) forma;
+
+                System.out.println("Saldo: R$ " + saldo.consultarSaldo());
+            }
+
+            double total = forma.calcularTotal();
+
+            System.out.println("Total: R$ " + total);
+
+            totalGeral = totalGeral + total;
+
+            numero++;
         }
 
-        // Exibindo a soma total de todos os pagamentos processados
-        System.out.println("GASTO TOTAL GERAL DA COMPRA: R$ " + gastoTotalGeral);
-        System.out.println("=========================================");
+        System.out.println("");
+        System.out.println("====================================");
+        System.out.println("TOTAL GERAL: R$ " + totalGeral);
+        System.out.println("====================================");
+
+        // teste pix
+        System.out.println("");
+        System.out.println("TESTE PIX");
+        System.out.println("------------------------------------");
+
+        Pagavel pix = new PagamentoPix(ebook.calcularPrecoFinal());
+
+        pix.processar();
+
+        System.out.println("Total pago: R$ " + pix.calcularTotal());
+
+        // teste vale presente
+        System.out.println("");
+        System.out.println("TESTE VALE PRESENTE");
+        System.out.println("------------------------------------");
+
+        ValePresente vale = new ValePresente(250.0);
+
+        ConsultavelSaldo consulta = vale;
+
+        System.out.println("Saldo do vale: R$ " + consulta.consultarSaldo());
+
+        System.out.println("Preco do livro: R$ " + livro.calcularPrecoFinal());
+
+        Pagavel pagamento = vale;
+
+        pagamento.processar();
+
+        System.out.println("Valor do livro: R$ " + livro.calcularPrecoFinal());
+
+        System.out.println("");
+        System.out.println("====================================");
+        System.out.println("FIM DO PROGRAMA");
+        System.out.println("====================================");
     }
 }

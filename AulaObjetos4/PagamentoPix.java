@@ -1,13 +1,12 @@
 public class PagamentoPix extends Pagamento {
 
-    // Construtor que passa o valor para a classe mãe (Pagamento)
     public PagamentoPix(double valor) {
         super(valor);
     }
 
     @Override
     public double calcularTaxa() {
-        return 0.00; // Taxa Zero
+        return 0.0;
     }
 
     @Override

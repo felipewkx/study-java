@@ -1,18 +1,19 @@
-public abstract class Pagamento {
-    private double valor;
+public abstract class Pagamento implements Pagavel {
+    protected double valor;
 
     public Pagamento(double valor) {
         this.valor = valor;
     }
 
     public double getValor() {
-        return valor;
+        return this.valor;
     }
 
     public abstract double calcularTaxa();
 
     public abstract void processar();
 
+    @Override
     public double calcularTotal() {
         return this.valor + calcularTaxa();
     }
