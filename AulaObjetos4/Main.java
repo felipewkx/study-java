@@ -1,172 +1,82 @@
+
 import java.util.ArrayList;
 
 public class Main {
+        public static void main(String[] args) {
+                // PARTE 4 (Início): Histórico da loja
+                ArrayList<String> historico = new ArrayList<>();
 
-    public static void main(String[] args) {
+                // PARTE 1: Fila de clientes
+                ArrayList<Cliente> filaAtendimento = new ArrayList<>();
 
-        // clientes
-        Cliente c1 = new Cliente("Ana Silva", "ana@email.com",
-                "123.456.789-00", "(51) 99999-9999");
-        c1.adicionarPontos(150);
+                Cliente c1 = new Cliente("Ana Silva", "ana@email.com", "111.111.111-11", "(11) 91111-1111");
+                Cliente c2 = new Cliente("Carlos Souza", "carlos.souza@email.com", "222.222.222-22", "(11) 92222-2222");
+                Cliente c3 = new Cliente("Mariana Costa", "mari.costa@email.com", "333.333.333-33", "(11) 93333-3333");
 
-        Cliente c2 = new Cliente("Carlos Souza", "carlos.souza@email.com",
-                "234.567.890-11", "(11) 98888-8888");
-        c2.adicionarPontos(50);
+                filaAtendimento.add(c1);
+                filaAtendimento.add(c2);
+                filaAtendimento.add(c3);
 
-        Cliente c3 = new Cliente("Mariana Costa", "mari.costa@email.com",
-                "345.678.901-22", "(21) 97777-7777");
+                historico.add("Clientes adicionados à fila: " + c1.getNome() + ", " + c2.getNome() + ", "
+                                + c3.getNome());
 
-        // funcionarios
-        Funcionario f1 = new Funcionario("Roberto Alves", "roberto@empresa.com",
-                "456.789.012-33", "(51) 95555-5555", "MAT-001");
+                System.out.println("==========================================");
+                System.out.println("          ATENDIMENTO DA LOJA");
+                System.out.println("==========================================");
 
-        Funcionario f2 = new Funcionario("Fernanda Lima", "fernanda@empresa.com",
-                "567.890.123-44", "(11) 94444-4444", "MAT-002");
+                // Atende o primeiro cliente usando remove(0)
+                Cliente clienteAtendido = filaAtendimento.remove(0);
+                historico.add("Cliente atendido: " + clienteAtendido.getNome());
 
-        // produtos
-        ProdutoFisico livro = new ProdutoFisico(
-                "Livro Físico - Harry Potter E A Pedra Filosofal",
-                50.0, 15.0);
+                System.out.println("Cliente em atendimento: " + clienteAtendido.getNome());
+                System.out.println("\nClientes ainda aguardando na fila:");
+                for (Cliente c : filaAtendimento) {
+                        System.out.println("- " + c.getNome());
+                }
 
-        ProdutoDigital ebook = new ProdutoDigital(
-                "E-book - Harry Potter E A Câmara Secreta",
-                30.0, "88453636454");
+                // PARTE 2: Pedido do cliente atendido
+                ProdutoFisico livro = new ProdutoFisico("Livro Clean Code", 90.0, 15.0);
+                ProdutoDigital ebook = new ProdutoDigital("E-book Design Patterns", 45.0, "QR-CODE-12345");
 
-        System.out.println("====================================");
-        System.out.println("       SISTEMA DE VENDAS");
-        System.out.println("====================================");
+                Pedido pedido = new Pedido(clienteAtendido);
+                pedido.adicionarItem(livro, 1);
+                pedido.adicionarItem(ebook, 2);
 
-        // clientes
-        System.out.println("\nCLIENTES");
-        System.out.println("------------------------------------");
+                historico.add("Pedido criado para " + clienteAtendido.getNome() + " com total de R$ "
+                                + pedido.calcularTotal());
 
-        System.out.print(c1.exibirDados());
+                System.out.println("\n------------------------------------------");
+                System.out.println("PEDIDO DO CLIENTE");
+                System.out.println("Cliente: " + pedido.getCliente().getNome());
+                for (ItemPedido item : pedido.getItens()) {
+                        System.out.println("- " + item.getProduto().nome + " | Qtd: " + item.getQuantidade()
+                                        + " | Subtotal: R$ " + item.calcularSubtotal());
+                }
+                System.out.println("Total do pedido: R$ " + pedido.calcularTotal());
 
-        System.out.println("------------------------------------");
+                // PARTE 3: Pagamento
+                System.out.println("\n------------------------------------------");
+                System.out.println("PROCESSAMENTO DO PAGAMENTO");
+                PagamentoPix pagamento = new PagamentoPix(pedido.calcularTotal());
+                pagamento.processar();
+                System.out.println("Total final pago (com taxas se houver): R$ " + pagamento.calcularTotal());
 
-        System.out.print(c2.exibirDados());
+                historico.add("Pagamento de R$ " + pagamento.calcularTotal() + " processado via Pix");
 
-        System.out.println("------------------------------------");
+                // PARTE 4 (Conclusão): Histórico antes e depois de desfazer
+                System.out.println("\n==========================================");
+                System.out.println("HISTÓRICO DA LOJA (ANTES DE DESFAZER):");
+                for (int i = 0; i < historico.size(); i++) {
+                        System.out.println((i + 1) + ". " + historico.get(i));
+                }
 
-        System.out.print(c3.exibirDados());
+                // Desfaz a última ação
+                historico.remove(historico.size() - 1);
 
-        // funcionarios
-        System.out.println("\nFUNCIONARIOS");
-        System.out.println("------------------------------------");
-
-        System.out.print(f1.exibirDados());
-        System.out.println(f1.exibirMatricula());
-
-        System.out.println("------------------------------------");
-
-        System.out.print(f2.exibirDados());
-        System.out.println(f2.exibirMatricula());
-
-        // produtos
-        System.out.println("\nPRODUTOS");
-        System.out.println("------------------------------------");
-
-        System.out.println("Nome: " + livro.nome);
-        System.out.println("Frete: R$ " + livro.frete);
-        System.out.println("Preco final: R$ " + livro.calcularPrecoFinal());
-
-        System.out.println("------------------------------------");
-
-        System.out.println("Nome: " + ebook.nome);
-        System.out.println("Preco final: R$ " + ebook.calcularPrecoFinal());
-        System.out.println("QR Code: " + ebook.qrCode);
-
-        // pagamentos
-        System.out.println("\nPAGAMENTOS");
-        System.out.println("------------------------------------");
-
-        ArrayList<Pagavel> formas = new ArrayList<>();
-
-        double precoEbook = ebook.calcularPrecoFinal();
-        double precoLivro = livro.calcularPrecoFinal();
-
-        formas.add(new PagamentoCartao(precoEbook));
-        formas.add(new PagamentoBoleto(precoEbook));
-        formas.add(new PagamentoPix(precoEbook));
-        formas.add(new PagamentoDinheiro(precoEbook));
-
-        formas.add(new PagamentoCartao(precoLivro));
-        formas.add(new PagamentoVale(precoLivro, 100.0));
-        formas.add(new PagamentoVale(precoLivro, 20.0));
-
-        formas.add(new ValePresente(50.0));
-
-        double totalGeral = 0;
-        int numero = 1;
-
-        for (Pagavel forma : formas) {
-
-            System.out.println("");
-            System.out.println("Transacao " + numero);
-
-            forma.processar();
-
-            if (forma instanceof Pagamento) {
-
-                Pagamento p = (Pagamento) forma;
-
-                System.out.println("Valor: R$ " + p.getValor());
-                System.out.println("Taxa: R$ " + p.calcularTaxa());
-
-            } else if (forma instanceof ConsultavelSaldo) {
-
-                ConsultavelSaldo saldo = (ConsultavelSaldo) forma;
-
-                System.out.println("Saldo: R$ " + saldo.consultarSaldo());
-            }
-
-            double total = forma.calcularTotal();
-
-            System.out.println("Total: R$ " + total);
-
-            totalGeral = totalGeral + total;
-
-            numero++;
+                System.out.println("\nHISTÓRICO DA LOJA (DEPOIS DE DESFAZER A ÚLTIMA AÇÃO):");
+                for (int i = 0; i < historico.size(); i++) {
+                        System.out.println((i + 1) + ". " + historico.get(i));
+                }
+                System.out.println("==========================================");
         }
-
-        System.out.println("");
-        System.out.println("====================================");
-        System.out.println("TOTAL GERAL: R$ " + totalGeral);
-        System.out.println("====================================");
-
-        // teste pix
-        System.out.println("");
-        System.out.println("TESTE PIX");
-        System.out.println("------------------------------------");
-
-        Pagavel pix = new PagamentoPix(ebook.calcularPrecoFinal());
-
-        pix.processar();
-
-        System.out.println("Total pago: R$ " + pix.calcularTotal());
-
-        // teste vale presente
-        System.out.println("");
-        System.out.println("TESTE VALE PRESENTE");
-        System.out.println("------------------------------------");
-
-        ValePresente vale = new ValePresente(250.0);
-
-        ConsultavelSaldo consulta = vale;
-
-        System.out.println("Saldo do vale: R$ " + consulta.consultarSaldo());
-
-        System.out.println("Preco do livro: R$ " + livro.calcularPrecoFinal());
-
-        Pagavel pagamento = vale;
-
-        pagamento.processar();
-
-        System.out.println("Valor do livro: R$ " + livro.calcularPrecoFinal());
-
-        System.out.println("");
-        System.out.println("====================================");
-        System.out.println("FIM DO PROGRAMA");
-        System.out.println("====================================");
-    }
 }
