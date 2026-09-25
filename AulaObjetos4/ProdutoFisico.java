@@ -11,9 +11,10 @@ public class ProdutoFisico extends Produto {
     }
 
     // Altera o cálculo para incluir o frete
-    @Override
-    public double calcularPrecoFinal() {
-        // Pega o preço padrão da mãe e soma com o frete
-        return super.calcularPrecoFinal() + this.frete;
-    }
+   
+@Override
+public double calcularPrecoFinal() {
+    // Pega o preço padrão e soma com o frete corretamente
+    return this.preco + this.frete;
+}
 }

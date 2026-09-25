@@ -10,9 +10,10 @@ public class ProdutoDigital extends Produto {
         this.qrCode = qrCode;
     }
 
-    // Como digital não tem frete, ele apenas repete o comportamento padrão da mãe.
-    @Override
-    public double calcularPrecoFinal() {
-        return super.calcularPrecoFinal();
-    }
+    // Como digital não tem frete, ele retorna diretamente o preço base.
+@Override
+public double calcularPrecoFinal() {
+    // Pega o preço padrão e soma com o frete corretamente
+    return this.preco;
+}
 }

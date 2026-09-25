@@ -1,10 +1,27 @@
 public class Cliente extends Usuario {
-    // Atributo específico do Cliente
+    // ATRIBUTOS ESTRUTURAIS DE CÓDIGO AUTOMÁTICO
+    public final int codigo;           // Cada cliente terá seu código fixo e único
+    public static int contador = 0;    // Compartilhado por todas as instâncias para contagem
+
     private int pontos;
 
     public Cliente(String nome, String email, String cpf, String telefone) {
         super(nome, email, cpf, telefone);
+        
+        // Incrementa o contador global e define o código único deste cliente
+        contador++;
+        this.codigo = contador; 
+        
         this.pontos = 0;
+    }
+
+    // Retorna o código único do cliente
+    public int getCodigo() {
+        return this.codigo;
+    }
+
+    public String getDocumento() {
+        return super.getCpf(); 
     }
 
     public void adicionarPontos(int quantidade) {
@@ -21,11 +38,10 @@ public class Cliente extends Usuario {
         this.pontos = pontos;
     }
 
-    // Sobrescrita do método da classe mãe (Usuario)
     @Override
     public String exibirDados() {
-        // Pega o texto do método original (Nome, Email, CPF, Telefone) e junta com os
-        // pontos
-        return super.exibirDados() + "Pontos do Cliente: " + this.pontos + "\n";
+        // Inclui o Código Automático antes dos dados da classe mãe e dos pontos
+        return "Código do Cliente: " + this.codigo + "\n" + 
+               super.exibirDados() + "\nPontos do Cliente: " + this.pontos + "\n";
     }
 }
