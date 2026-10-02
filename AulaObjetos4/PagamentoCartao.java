@@ -1,13 +1,21 @@
 public class PagamentoCartao extends Pagamento {
+    private double taxaPersonalizada = -1;
 
-    // Construtor que passa o valor para a classe mãe (Pagamento)
     public PagamentoCartao(double valor) {
         super(valor);
     }
 
+    public PagamentoCartao(double valor, double taxa) {
+        super(valor);
+        this.taxaPersonalizada = taxa;
+    }
+
     @Override
     public double calcularTaxa() {
-        return this.getValor() * 0.05; // Busca o valor usando o getter
+        if (taxaPersonalizada >= 0) {
+            return taxaPersonalizada;
+        }
+        return this.getValor() * 0.05;
     }
 
     @Override
