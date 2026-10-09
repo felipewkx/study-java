@@ -15,6 +15,6 @@ public class ProdutoFisico extends Produto {
 @Override
 public double calcularPrecoFinal() {
     // Pega o preço padrão e soma com o frete corretamente
-    return this.preco + this.frete;
+    return this.getPreco() + this.frete;
 }
 }

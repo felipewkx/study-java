@@ -1,26 +1,44 @@
-// Arquivo: Produto.java
 public abstract class Produto {
-    public final int codigo;
-    public static int contador = 0;
-    public String nome;
-    public double preco;
+    private static int geradorCodigo = 1;
+    private int codigo;
+    private String nome;
+    private double preco;
+    private int quantidade;
 
-    // Construtor básico para receber o nome e o preço
     public Produto(String nome, double preco) {
-        this.codigo = contador++;
+        this.codigo = geradorCodigo++;
         this.nome = nome;
         this.preco = preco;
+        this.quantidade = 0;
     }
 
     public int getCodigo() {
         return codigo;
     }
 
-    // Método getPreco
-    public double getPreco() {
-        return this.preco;
+    public String getNome() {
+        return nome;
     }
 
-    // Método transformado em ABSTRATO (as classes filhas devem implementar)
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public double getPreco() {
+        return preco;
+    }
+
+    public void setPreco(double preco) {
+        this.preco = preco;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
+
     public abstract double calcularPrecoFinal();
 }

@@ -14,6 +14,6 @@ public class ProdutoDigital extends Produto {
 @Override
 public double calcularPrecoFinal() {
     // Pega o preço padrão e soma com o frete corretamente
-    return this.preco;
+    return getPreco();
 }
 }

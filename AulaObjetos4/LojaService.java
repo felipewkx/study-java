@@ -1,10 +1,12 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LojaService {
-    private final List<Cliente> clientes = new ArrayList<>();
-    private final List<Produto> produtos = new ArrayList<>();
-    private final List<Pedido> pedidos = new ArrayList<>();
+    private List<Cliente> clientes = new ArrayList<>();
+    private List<Produto> produtos = new ArrayList<>();
+    private List<Pedido> pedidos = new ArrayList<>();
 
     public void cadastrarCliente(Cliente cliente) {
         clientes.add(cliente);
@@ -31,41 +33,61 @@ public class LojaService {
     }
 
     public void finalizarCompra(Pedido pedido, Pagamento pagamento) {
-        // 1. Valida se o cliente do pedido está cadastrado
+        // 1. Validações básicas existentes
         if (pedido == null || !clienteCadastrado(pedido.getCliente())) {
             throw new IllegalArgumentException("Cliente do pedido não está cadastrado na loja.");
         }
 
-        // 2. Valida se o pedido possui itens
         if (pedido.getItens() == null || pedido.getItens().isEmpty()) {
             throw new IllegalArgumentException("O pedido precisa de pelo menos um item.");
         }
 
-        // 3. Valida se todos os produtos do pedido estão cadastrados na loja
+        // Validação se os produtos existem na loja
         for (ItemPedido item : pedido.getItens()) {
             if (buscarProdutoPorCodigo(item.getProduto().getCodigo()) == null) {
                 throw new IllegalArgumentException("Produto de código " + item.getProduto().getCodigo() + " não cadastrado na loja.");
             }
         }
 
-        // 4. Valida se o valor-base do pagamento bate com o total do pedido
+        // 2. NOVA REGRA: Conferir estoque de todos os itens 
+        Map<Integer, Integer> quantidadesTotais = new HashMap<>();
+        for (ItemPedido item : pedido.getItens()) {
+            int codigo = item.getProduto().getCodigo();
+            quantidadesTotais.put(codigo, quantidadesTotais.getOrDefault(codigo, 0) + item.getQuantidade());
+        }
+
+        for (ItemPedido item : pedido.getItens()) {
+            int codigo = item.getProduto().getCodigo();
+            int totalDesejado = quantidadesTotais.get(codigo);
+            if (totalDesejado > item.getProduto().getQuantidade()) {
+                throw new IllegalArgumentException("Estoque insuficiente para o produto: " + item.getProduto().getNome());
+            }
+        }
+
+        // Validação de pagamento 
         if (Double.compare(pagamento.getValor(), pedido.calcularTotal()) != 0) {
             throw new IllegalArgumentException("Pagamento diferente do pedido.");
         }
 
-        // Fluxo: processar pagamento -> registrar pedido
+        // 3. Processar o pagamento
         pagamento.processar();
+
+        // 4. Atualizar o saldo dos produtos (baixa de estoque)
+        for (ItemPedido item : pedido.getItens()) {
+            Produto prod = item.getProduto();
+            prod.setQuantidade(prod.getQuantidade() - item.getQuantidade());
+        }
+
+        // 5. Registrar o pedido finalizado
         this.pedidos.add(pedido);
     }
 
     public List<Pedido> listarPedidos() {
-        return new ArrayList<>(this.pedidos);
+        return new ArrayList<>(pedidos);
     }
 
     private boolean clienteCadastrado(Cliente cliente) {
-        if (cliente == null) {
-            return false;
-        }
+        if (cliente == null) return false;
         for (Cliente c : clientes) {
             if (c.getCodigo() == cliente.getCodigo() || c.getDocumento().equals(cliente.getDocumento())) {
                 return true;
