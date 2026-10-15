@@ -1,3 +1,7 @@
+package br.com.senac.model;
+
+import br.com.senac.service.LojaService;
+
 public class Main {
     public static void main(String[] args) {
         LojaService loja = new LojaService();

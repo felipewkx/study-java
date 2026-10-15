@@ -1,4 +1,6 @@
-public abstract class Produto {
+package br.com.senac.model;
+
+public class Produto {
     private static int geradorCodigo = 1;
     private int codigo;
     private String nome;
@@ -10,6 +12,11 @@ public abstract class Produto {
         this.nome = nome;
         this.preco = preco;
         this.quantidade = 0;
+    }
+
+    public Produto(String nome, double preco, int quantidade) {
+        this(nome, preco);
+        setQuantidade(quantidade);
     }
 
     public int getCodigo() {
@@ -40,5 +47,7 @@ public abstract class Produto {
         this.quantidade = quantidade;
     }
 
-    public abstract double calcularPrecoFinal();
+    public double calcularPrecoFinal() {
+        return preco;
+    }
 }

@@ -1,13 +1,20 @@
-public class PagamentoBoleto extends Pagamento {
+package br.com.senac.model;
 
-    // Construtor que passa o valor para a classe mãe (Pagamento)
+public class PagamentoBoleto extends Pagamento {
+    private final double taxa;
+
     public PagamentoBoleto(double valor) {
+        this(valor, 2.50);
+    }
+
+    public PagamentoBoleto(double valor, double taxa) {
         super(valor);
+        this.taxa = taxa;
     }
 
     @Override
     public double calcularTaxa() {
-        return 2.50; // Taxa Fixa
+        return taxa;
     }
 
     @Override

@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public class PagamentoCartao extends Pagamento {
     private double taxaPersonalizada = -1;
 

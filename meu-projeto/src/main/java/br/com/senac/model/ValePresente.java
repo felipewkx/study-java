@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public class ValePresente implements Pagavel, ConsultavelSaldo {
     private double valor;
 

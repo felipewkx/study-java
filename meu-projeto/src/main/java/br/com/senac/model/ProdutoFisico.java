@@ -1,4 +1,5 @@
-// Arquivo: ProdutoFisico.java
+package br.com.senac.model;
+
 public class ProdutoFisico extends Produto {
     // Dado exclusivo do produto físico
     public double frete;

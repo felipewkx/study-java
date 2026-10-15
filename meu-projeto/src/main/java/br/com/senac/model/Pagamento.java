@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public abstract class Pagamento implements Pagavel {
     protected double valor;
 

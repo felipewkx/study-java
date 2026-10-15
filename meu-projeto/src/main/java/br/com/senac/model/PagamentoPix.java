@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public class PagamentoPix extends Pagamento {
 
     public PagamentoPix(double valor) {

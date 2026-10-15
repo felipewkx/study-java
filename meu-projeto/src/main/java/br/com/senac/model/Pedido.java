@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 import java.util.ArrayList;
 
 public class Pedido {

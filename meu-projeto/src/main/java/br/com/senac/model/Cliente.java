@@ -17,6 +17,11 @@ public class Cliente extends Usuario {
         this.pontos = 0;
     }
 
+    public Cliente(String nome, String documento, int pontos) {
+        this(nome, "", documento, "");
+        this.pontos = pontos;
+    }
+
     // Retorna o código único do cliente
     public int getCodigo() {
         return this.codigo;

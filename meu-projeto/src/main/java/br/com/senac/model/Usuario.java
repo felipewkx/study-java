@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public class Usuario {
     private String nome;
     private String email;
@@ -39,6 +41,10 @@ public class Usuario {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public void setDocumento(String documento) {
+        this.cpf = documento;
     }
 
     public String getTelefone() {

@@ -1,4 +1,6 @@
 // Arquivo: ProdutoDigital.java
+package br.com.senac.model;
+
 public class ProdutoDigital extends Produto {
     // Dado exclusivo do produto digital
     public String qrCode;

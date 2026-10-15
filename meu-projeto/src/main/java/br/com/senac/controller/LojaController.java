@@ -20,43 +20,38 @@ public class LojaController {
     }
 
     public void cadastrarCliente(Cliente cliente) {
-        // TODO: encaminhar o cliente ao LojaService.
+        lojaService.cadastrarCliente(cliente);
     }
 
     public void cadastrarProduto(Produto produto) {
-        // TODO: encaminhar o produto ao LojaService.
+        lojaService.cadastrarProduto(produto);
     }
 
     public Produto buscarProdutoPorCodigo(int codigo) {
-        // TODO: buscar no LojaService e devolver o resultado.
-        return null;
+        return lojaService.buscarProdutoPorCodigo(codigo);
     }
 
     public List<Cliente> listarClientes() {
-        // TODO: devolver a lista fornecida pelo LojaService.
-        return List.of();
+        return lojaService.listarClientes();
     }
 
     public List<Produto> listarProdutos() {
-        // TODO: devolver a lista fornecida pelo LojaService.
-        return List.of();
+        return lojaService.listarProdutos();
     }
 
     public void reporEstoque(int codigo, int quantidade) {
-        // TODO: encaminhar código e quantidade ao LojaService.
+        lojaService.reporEstoque(codigo, quantidade);
     }
 
     public Pedido abrirPedido(Cliente cliente) {
-        // TODO: pedir ao LojaService para abrir o pedido e devolver o resultado.
-        return null;
+        return lojaService.abrirPedido(cliente);
     }
 
     public void finalizarCompra(Pedido pedido, Pagamento pagamento) {
-        // TODO: encaminhar pedido e pagamento ao LojaService.
+        lojaService.finalizarCompra(pedido, pagamento);
     }
 
     public List<Pedido> listarPedidos() {
-        // TODO: devolver o histórico fornecido pelo LojaService.
-        return List.of();
+        return lojaService.listarPedidos();
     }
 }

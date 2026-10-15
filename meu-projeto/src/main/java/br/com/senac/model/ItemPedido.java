@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public class ItemPedido {
     private Produto produto;
     private int quantidade;

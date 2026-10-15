@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public class PagamentoVale extends Pagamento {
     private double saldoDisponivel;
     private boolean aprovado;

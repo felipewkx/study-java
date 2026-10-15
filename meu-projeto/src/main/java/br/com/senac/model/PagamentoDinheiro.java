@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public class PagamentoDinheiro extends Pagamento {
 
     // Construtor que passa o valor para a classe mãe (Pagamento)
