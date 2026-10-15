@@ -1,3 +1,5 @@
+package br.com.senac.model;
+
 public class Cliente extends Usuario {
     // ATRIBUTOS ESTRUTURAIS DE CÓDIGO AUTOMÁTICO
     public final int codigo;           // Cada cliente terá seu código fixo e único
